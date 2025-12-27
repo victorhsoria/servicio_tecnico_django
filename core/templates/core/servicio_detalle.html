@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Servicio #{{ object.id }} · Servicio Técnico{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h1 class="h3 mb-0">Servicio #{{ object.id }}</h1>
+    <div class="text-muted">{{ object.cliente }} · {{ object.tipo_equipo }}</div>
+  </div>
+
+  <div class="d-flex gap-2 no-print">
+    <a class="btn btn-outline-secondary"
+       href="{% url 'servicio_comprobante' object.pk %}" target="_blank">
+      <i class="bi bi-receipt"></i> Comprobante
+    </a>
+
+    <a class="btn btn-outline-dark"
+       href="{% url 'servicio_imprimir' object.pk %}" target="_blank">
+      <i class="bi bi-printer"></i> Imprimir
+    </a>
+
+    <a class="btn btn-primary"
+       href="{% url 'servicios_editar' object.pk %}">
+      <i class="bi bi-pencil"></i> Editar
+    </a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <span class="badge text-bg-secondary">{{ object.estado_actual }}</span>
+          </div>
+          <div class="text-muted small">
+            Ingreso: {{ object.fecha_ingreso|date:"d/m/Y H:i" }}
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="mb-2">
+          <div class="fw-semibold">Problema reportado</div>
+          <div class="text-muted">{{ object.problema_reportado|linebreaksbr }}</div>
+        </div>
+
+        {% if object.observaciones_tecnicas %}
+        <div class="mb-2">
+          <div class="fw-semibold">Observaciones técnicas</div>
+          <div class="text-muted">{{ object.observaciones_tecnicas|linebreaksbr }}</div>
+        </div>
+        {% endif %}
+
+        {% if object.solucion_implementada %}
+        <div class="mb-2">
+          <div class="fw-semibold">Solución implementada</div>
+          <div class="text-muted">{{ object.solucion_implementada|linebreaksbr }}</div>
+        </div>
+        {% endif %}
+
+        <div class="mt-3 d-flex gap-3 flex-wrap">
+          <div><span class="text-muted">Marca/Modelo:</span> {{ object.marca_modelo|default:"-" }}</div>
+          <div><span class="text-muted">Costo:</span> ${{ object.costo_total|default:"0.00" }}</div>
+          <div><span class="text-muted">Entrega:</span> {{ object.fecha_entrega|date:"d/m/Y H:i"|default:"-" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="h5">Historial de estados</h2>
+        <div class="list-group list-group-flush">
+          {% for h in object.historial_estados.all %}
+            <div class="list-group-item px-0">
+              <div class="d-flex justify-content-between">
+                <div class="fw-semibold">{{ h.estado }}</div>
+                <div class="text-muted small">{{ h.fecha_cambio|date:"d/m/Y H:i" }}</div>
+              </div>
+              {% if h.observaciones %}
+                <div class="text-muted small">{{ h.observaciones|linebreaksbr }}</div>
+              {% endif %}
+            </div>
+          {% empty %}
+            <div class="text-muted">Todavía no hay historial (raro, pero ok).</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

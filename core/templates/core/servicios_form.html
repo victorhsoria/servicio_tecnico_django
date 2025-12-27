@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Servicio · Servicio Técnico{% endblock %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h1 class="h4 mb-0">{% if object %}Editar servicio #{{ object.id }}{% else %}Nuevo servicio{% endif %}</h1>
+      {% if object %}
+        <a class="btn btn-outline-dark no-print" href="{% url 'servicio_detalle' object.pk %}"><i class="bi bi-eye"></i> Ver</a>
+      {% endif %}
+    </div>
+
+    <form method="post" class="row g-3">{% csrf_token %}
+      {% for field in form %}
+        <div class="col-12 {% if field.name in 'problema_reportado,observaciones_tecnicas,solucion_implementada' %}col-lg-12{% else %}col-lg-6{% endif %}">
+          <label class="form-label">{{ field.label }}</label>
+          {{ field }}
+          {% for e in field.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+        </div>
+      {% endfor %}
+
+      {% if object %}
+      <div class="col-12">
+        <label class="form-label">Observaciones del cambio (para historial)</label>
+        <textarea class="form-control" name="observaciones_historial" rows="2" placeholder="Ej: se cambió el flex / se llamó al cliente / etc."></textarea>
+        <div class="form-text">Si cambiás el estado, esto queda registrado.</div>
+      </div>
+      {% endif %}
+
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-save"></i> Guardar</button>
+        <a class="btn btn-outline-secondary" href="{% url 'servicios_list' %}">Volver</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

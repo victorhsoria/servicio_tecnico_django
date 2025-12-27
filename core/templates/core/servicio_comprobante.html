@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% block title %}Comprobante / Orden de trabajo #{{ object.id }}{% endblock %}
+
+{% block content %}
+<div class="no-print d-flex justify-content-end gap-2 mb-3">
+  <button class="btn btn-dark" onclick="window.print()">
+    <i class="bi bi-printer"></i> Imprimir
+  </button>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+      <div>
+        <h1 class="h4 mb-1">Orden de trabajo / Comprobante</h1>
+        <div class="text-muted">Servicio #{{ object.id }} · {{ object.fecha_ingreso|date:"d/m/Y H:i" }}</div>
+      </div>
+
+      <div class="text-end">
+        <div class="fw-semibold">Servicio Técnico</div>
+        <div>Victor Soria</div>
+        <div class="text-muted small">9 de Julio 1070, Metán, Salta</div>
+        <div class="text-muted small">Cel. 3876505131</div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <div class="fw-semibold mb-1">Cliente</div>
+        <div>{{ object.cliente }}</div>
+        <div class="text-muted small">
+          {{ object.cliente.telefono|default:"-" }}
+          {% if object.cliente.email %} · {{ object.cliente.email }}{% endif %}
+        </div>
+        <div class="text-muted small">{{ object.cliente.direccion|default:"-" }}</div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="fw-semibold mb-1">Equipo</div>
+        <div>{{ object.tipo_equipo }}</div>
+        <div class="text-muted small">Marca/Modelo: {{ object.marca_modelo|default:"-" }}</div>
+        <div class="text-muted small">Estado actual: {{ object.estado_actual }}</div>
+      </div>
+    </div>
+
+    <hr>
+
+    {# Identificación / Seguridad #}
+    <div class="row g-3">
+      <div class="col-12 col-md-4">
+        <div class="fw-semibold">N° Serie / IMEI</div>
+        <div class="text-muted">______________________________</div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="fw-semibold">Clave / Patrón</div>
+        <div class="text-muted">______________________________</div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="fw-semibold">Estado físico</div>
+        <div class="text-muted">______________________________</div>
+      </div>
+      <div class="col-12">
+        <div class="fw-semibold">Observaciones del equipo (golpes, pantalla, humedad, etc.)</div>
+        <div class="text-muted">__________________________________________________________________________</div>
+        <div class="text-muted">__________________________________________________________________________</div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="mb-3">
+      <div class="fw-semibold">Problema reportado</div>
+      <div class="text-muted">{{ object.problema_reportado|linebreaksbr }}</div>
+    </div>
+
+    <div class="mb-3">
+      <div class="fw-semibold">Trabajo a realizar / Diagnóstico</div>
+      <div class="text-muted">
+        {% if object.observaciones_tecnicas %}
+          {{ object.observaciones_tecnicas|linebreaksbr }}
+        {% else %}
+          ________________________________<br>
+          ________________________________<br>
+          ________________________________
+        {% endif %}
+      </div>
+    </div>
+
+    <hr>
+
+    {# Accesorios recibidos #}
+<div class="fw-semibold mb-2">Accesorios recibidos (tildar)</div>
+
+<div class="row g-2 small">
+  <div class="col-12 col-md-3">
+    <label class="st-check">
+      <input type="checkbox">
+      <span class="print-box"></span>
+      Cargador
+    </label>
+  </div>
+
+  <div class="col-12 col-md-3">
+    <label class="st-check">
+      <input type="checkbox">
+      <span class="print-box"></span>
+      Cable
+    </label>
+  </div>
+
+  <div class="col-12 col-md-3">
+    <label class="st-check">
+      <input type="checkbox">
+      <span class="print-box"></span>
+      Funda
+    </label>
+  </div>
+
+  <div class="col-12 col-md-3">
+    <label class="st-check">
+      <input type="checkbox">
+      <span class="print-box"></span>
+      Auriculares
+    </label>
+  </div>
+
+  <div class="col-12 col-md-3">
+    <label class="st-check">
+      <input type="checkbox">
+      <span class="print-box"></span>
+      Batería
+    </label>
+  </div>
+
+  <div class="col-12 col-md-3">
+    <label class="st-check">
+      <input type="checkbox">
+      <span class="print-box"></span>
+      Memoria/SD
+    </label>
+  </div>
+
+  <div class="col-12 col-md-3">
+    <label class="st-check">
+      <input type="checkbox">
+      <span class="print-box"></span>
+      SIM/Chip
+    </label>
+  </div>
+
+  <div class="col-12 col-md-3">
+    <label class="st-check">
+      <input type="checkbox">
+      <span class="print-box"></span>
+      Caja
+    </label>
+  </div>
+
+  <div class="col-12">
+    <span class="text-muted">Otros:</span> ________________________________________________
+  </div>
+</div>
+
+    <hr>
+
+    {# Presupuesto / Anticipo #}
+    <div class="row g-3">
+      <div class="col-12 col-md-4">
+        <div class="fw-semibold">Presupuesto estimado</div>
+        <div class="fs-5">$ {{ object.costo_total|default:"0.00" }}</div>
+        <div class="text-muted small">* Puede variar si aparecen repuestos/daños no visibles.</div>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <div class="fw-semibold">Anticipo</div>
+        <div class="text-muted">$ __________________</div>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <div class="fw-semibold">Saldo</div>
+        <div class="text-muted">$ __________________</div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="fw-semibold">Fecha estimada de entrega</div>
+        <div class="text-muted">__________________________</div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="fw-semibold">Contacto para avisos</div>
+        <div class="text-muted">__________________________</div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="fw-semibold mb-2">Condiciones</div>
+    <ul class="text-muted small mb-3">
+      <li>El equipo se recibe para diagnóstico y/o reparación según lo detallado.</li>
+      <li>Si aparecen fallas/repuestos extra, se informa antes de realizar trabajos adicionales.</li>
+      <li>Garantía solo sobre el trabajo/repuesto realizado (no cubre golpes, humedad o terceros).</li>
+      <li>Retiro con comprobante. Equipo no retirado luego de 30 días puede generar cargo de guardado (si aplica).</li>
+    </ul>
+
+    <div class="text-muted small mb-4">
+      <span class="fw-semibold">Conformidad:</span> Declaro que recibí copia del comprobante y acepto condiciones.
+    </div>
+
+    <div class="row g-4">
+      <div class="col-12 col-md-6">
+        <div class="text-muted small">Firma cliente</div>
+        <div style="border-bottom: 1px solid #999; height: 28px;"></div>
+        <div class="text-muted small mt-1">Aclaración / DNI</div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="text-muted small">Firma técnico</div>
+        <div style="border-bottom: 1px solid #999; height: 28px;"></div>
+        <div class="text-muted small mt-1">Aclaración</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

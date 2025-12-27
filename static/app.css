@@ -1,0 +1,258 @@
+/* minimal vibes */
+.card-hover { transition: transform .08s ease-in-out; }
+.card-hover:hover { transform: translateY(-2px); }
+.badge-state { font-weight: 600; }
+@media print {
+  nav, .no-print { display: none !important; }
+  body { background: #fff !important; }
+  .container { max-width: 100% !important; }
+}
+
+.badge-state { font-weight: 600; }
+
+/* Mapeo por estado */
+.badge-state[data-state="Pendiente"] { background: var(--bs-secondary); }
+.badge-state[data-state="En Diagnóstico"] { background: var(--bs-info); }
+.badge-state[data-state="En Reparación"] { background: var(--bs-primary); }
+.badge-state[data-state="En Espera de Repuestos"] { background: var(--bs-warning); color: #111; }
+.badge-state[data-state="Listo para Retirar"] { background: var(--bs-success); }
+.badge-state[data-state="Entregado"] { background: var(--bs-dark); }
+.badge-state[data-state="Cancelado"] { background: var(--bs-danger); }
+
+@media print {
+  /* Oculta lo que no va en papel */
+  .no-print { display: none !important; }
+
+  /* Asegura contraste y legibilidad en B/N */
+  .badge-state {
+    background: #000 !important;
+    color: #fff !important;
+    border: 1px solid #000 !important;
+  }
+
+  /* Evita sombras y cosas innecesarias en impresión */
+  .card, .shadow-sm { box-shadow: none !important; }
+}
+
+/* ====== PRINT: Comprobante A4 prolijo ====== */
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  /* Limpieza general */
+  body {
+    font-size: 11.5pt;
+    line-height: 1.25;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Ocultar UI */
+  .no-print,
+  nav,
+  header,
+  footer {
+    display: none !important;
+  }
+
+  /* Tarjetas sin “look web” */
+  .card, .shadow-sm {
+    box-shadow: none !important;
+    border: 0 !important;
+  }
+  .card-body {
+    padding: 0 !important;
+  }
+
+  /* Contenedor documento */
+  .print-doc {
+    width: 100%;
+  }
+
+  /* Encabezado */
+  .print-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #000;
+  }
+
+  .print-title {
+    font-size: 16pt;
+    font-weight: 800;
+    margin: 0;
+  }
+
+  .print-meta {
+    text-align: right;
+    font-size: 10pt;
+    color: #000 !important;
+  }
+
+  /* Bloques */
+  .print-grid {
+    display: flex;
+    gap: 18px;
+    margin: 10px 0 6px;
+  }
+  .print-col {
+    flex: 1;
+  }
+
+  .print-label {
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .print-muted {
+    color: #000 !important;
+    font-size: 10pt;
+  }
+
+  /* Separadores */
+  .print-hr {
+    border: 0;
+    border-top: 1px solid #000;
+    margin: 10px 0;
+  }
+
+  /* Badge estado en B/N (lo que ya querías) */
+  .badge-state {
+    background: #000 !important;
+    color: #fff !important;
+    border: 1px solid #000 !important;
+  }
+
+  /* Firmas */
+  .print-signs {
+    margin-top: 16px;
+    font-size: 10.5pt;
+    display: flex;
+    gap: 18px;
+  }
+  .print-sign {
+    flex: 1;
+  }
+  .print-line {
+    display: block;
+    border-bottom: 1px solid #000;
+    height: 18px;
+    margin-top: 10px;
+  }
+
+  /* Evitar cortes feos */
+  .print-avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+/* ===== Clientes: look & feel ===== */
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  letter-spacing: .5px;
+  flex: 0 0 38px;
+}
+
+.client-name { font-weight: 700; }
+.client-sub { font-size: .875rem; }
+
+.client-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .18rem .55rem;
+  border-radius: 999px;
+  background: rgba(0,0,0,.06);
+  font-size: .825rem;
+}
+
+.table-modern thead th { font-size: .85rem; }
+.table-modern tbody tr:hover { background: rgba(13,110,253,.06); } /* azul suave */
+
+/* ===== Clientes: look & feel ===== */
+.table-modern thead th { font-size: .85rem; }
+.table-modern tbody tr:hover { background: rgba(13,110,253,.06); }
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  letter-spacing: .5px;
+  flex: 0 0 38px;
+}
+
+.client-name { font-weight: 700; }
+.client-sub { font-size: .875rem; }
+
+.client-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .18rem .55rem;
+  border-radius: 999px;
+  background: rgba(0,0,0,.06);
+  font-size: .825rem;
+}
+
+/* Un poquito más de “card vibe” */
+.card.shadow-sm { border: 1px solid rgba(0,0,0,.06); }
+
+.client-chip {
+  background: rgba(13,110,253,.10);
+  border: 1px solid rgba(13,110,253,.15);
+}
+
+/* Checkboxes “tildables” en pantalla, y que impriman bien */
+.st-check{
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  user-select: none;
+}
+
+.st-check input[type="checkbox"]{
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+}
+
+.print-box{
+  display: none; /* en pantalla se ve el checkbox real */
+}
+
+/* En impresión: ocultamos el checkbox real y dibujamos uno “de papel” */
+@media print{
+  .st-check input[type="checkbox"]{
+    display: none;
+  }
+  .print-box{
+    display: inline-block;
+    width: 12pt;
+    height: 12pt;
+    border: 1pt solid #000;
+    position: relative;
+  }
+  .st-check input[type="checkbox"]:checked + .print-box::after{
+    content: "✓";
+    position: absolute;
+    left: 2pt;
+    top: -2pt;
+    font-size: 12pt;
+    font-weight: 700;
+  }
+}

@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}Reportes · Servicio Técnico{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h1 class="h3 mb-0">Reportes</h1>
+    <div class="text-muted small">Filtrá, exportá y a otra cosa 😄</div>
+  </div>
+</div>
+
+{# ✅ Filtros (UNO solo) #}
+<form class="row g-2 align-items-end mb-3" method="get">
+  <div class="col-12 col-lg-3">
+    <label class="form-label small text-muted mb-1">Desde</label>
+    <input type="date" class="form-control" name="fecha_inicio"
+           value="{{ fecha_inicio_str|default_if_none:'' }}">
+  </div>
+
+  <div class="col-12 col-lg-3">
+    <label class="form-label small text-muted mb-1">Hasta</label>
+    <input type="date" class="form-control" name="fecha_fin"
+           value="{{ fecha_fin_str|default_if_none:'' }}">
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <label class="form-label small text-muted mb-1">Estado</label>
+    <select class="form-select" name="estado">
+      <option value="">Todos</option>
+      {% for value,label in estado_choices %}
+        <option value="{{ value }}"
+          {% if estado_actual == value|stringformat:"s" %}selected{% endif %}>
+          {{ label }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-12 col-lg-2 d-grid">
+    <button class="btn btn-outline-dark" type="submit">
+      <i class="bi bi-funnel"></i> Filtrar
+    </button>
+  </div>
+</form>
+
+{# ✅ Export (UNO solo) - mantiene mismos parámetros #}
+<div class="d-flex gap-2 flex-wrap mb-4">
+  <a class="btn btn-outline-success"
+     href="{% url 'reportes_excel' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}">
+    <i class="bi bi-file-earmark-excel"></i> Excel
+  </a>
+
+  <a class="btn btn-outline-danger"
+     href="{% url 'reportes_pdf' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}">
+    <i class="bi bi-file-earmark-pdf"></i> PDF
+  </a>
+
+  <a class="btn btn-outline-secondary" href="{% url 'reportes' %}">
+    <i class="bi bi-x-circle"></i> Limpiar
+  </a>
+</div>
+
+{# ✅ Resumen #}
+<div class="row g-3 mb-3">
+  <div class="col-12 col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="text-muted small">Ingresos (filtro)</div>
+        <div class="display-6 fw-semibold">${{ total_ingresos|floatformat:2 }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="text-muted small">Ingresos mes actual</div>
+        <div class="display-6 fw-semibold">${{ ingresos_mes_actual|floatformat:2 }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="text-muted small">Servicios (filtro)</div>
+        <div class="display-6 fw-semibold">{{ total_servicios_filtrados }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  {# Por estado #}
+  <div class="col-12 col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Servicios por estado</h2>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Estado</th>
+                <th class="text-end">Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in servicios_por_estado %}
+                <tr>
+                  <td>{{ r.estado_actual }}</td>
+                  <td class="text-end">{{ r.count }}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="2" class="text-center text-muted py-3">Sin datos.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# Por tipo de equipo #}
+  <div class="col-12 col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Servicios por tipo de equipo</h2>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th class="text-end">Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in servicios_por_tipo_equipo %}
+                <tr>
+                  <td>{{ r.tipo_equipo }}</td>
+                  <td class="text-end">{{ r.count }}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="2" class="text-center text-muted py-3">Sin datos.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# Top clientes #}
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Top clientes (últimos servicios filtrados)</h2>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th class="text-end">Servicios</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in servicios_por_cliente %}
+                <tr>
+                  <td>{{ r.cliente__apellido }}, {{ r.cliente__nombre }}</td>
+                  <td class="text-end">{{ r.count }}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="2" class="text-center text-muted py-3">Sin datos.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

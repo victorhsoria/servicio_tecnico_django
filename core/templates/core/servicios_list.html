@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Servicios · Servicio Técnico{% endblock %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h1 class="h3 mb-0">Servicios</h1>
+  <a class="btn btn-primary" href="{% url 'servicios_nuevo' %}">
+    <i class="bi bi-plus-circle"></i> Nuevo
+  </a>
+</div>
+
+{# ✅ Filtros rápidos con contadores #}
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <a class="btn btn-sm {% if not estado_actual %}btn-dark{% else %}btn-outline-dark{% endif %}"
+     href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if request.GET.cliente %}cliente={{ request.GET.cliente|urlencode }}&{% endif %}">
+    <i class="bi bi-grid-3x3-gap"></i> Todos
+    <span class="badge text-bg-light text-dark ms-1">{{ quick_total }}</span>
+  </a>
+
+  {% for f in quick_filters %}
+    <a class="btn btn-sm {% if estado_actual == f.value %}btn-{{ f.btn }}{% else %}btn-outline-{{ f.btn }}{% endif %}"
+       href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if request.GET.cliente %}cliente={{ request.GET.cliente|urlencode }}&{% endif %}estado={{ f.value|urlencode }}">
+      <i class="bi {{ f.icon }}"></i> {{ f.label }}
+      <span class="badge text-bg-light text-dark ms-1">{{ f.count }}</span>
+    </a>
+  {% endfor %}
+</div>
+
+<form class="row g-2 mb-3" method="get">
+  {# ✅ Si venís filtrando por cliente, lo mantenemos #}
+  {% if cliente_filtrado %}
+    <input type="hidden" name="cliente" value="{{ cliente_filtrado }}">
+  {% endif %}
+
+  <div class="col-12 col-lg-7">
+    <input class="form-control"
+           name="q"
+           value="{{ request.GET.q|default_if_none:'' }}"
+           placeholder="Buscar por #, cliente, equipo, marca/modelo…">
+  </div>
+
+  <div class="col-12 col-lg-3">
+    <select class="form-select" name="estado">
+      <option value="">Estado (todos)</option>
+      {% for value,label in estado_choices %}
+        <option value="{{ value }}"
+          {% if request.GET.estado == value|stringformat:"s" %}selected{% endif %}>
+          {{ label }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-12 col-lg-2 d-grid">
+    <button class="btn btn-outline-dark" type="submit">
+      <i class="bi bi-search"></i> Filtrar
+    </button>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0 align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>Cliente</th>
+          <th>Equipo</th>
+          <th>Estado</th>
+          <th>Ingreso</th>
+          <th class="text-end">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for s in object_list %}
+        <tr>
+          <td class="fw-semibold">{{ s.id }}</td>
+          <td>{{ s.cliente }}</td>
+
+          <td>
+            {{ s.tipo_equipo }}
+            {% if s.marca_modelo %}
+              <div class="text-muted small">{{ s.marca_modelo }}</div>
+            {% endif %}
+          </td>
+
+          <td>
+            <span class="badge badge-state" data-state="{{ s.estado_actual }}">{{ s.estado_actual }}</span>
+          </td>
+
+          <td>{{ s.fecha_ingreso|date:"d/m/Y H:i" }}</td>
+
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-dark" href="{% url 'servicio_detalle' s.pk %}">
+              <i class="bi bi-eye"></i>
+            </a>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'servicios_editar' s.pk %}">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <a class="btn btn-sm btn-outline-danger" href="{% url 'servicios_eliminar' s.pk %}">
+              <i class="bi bi-trash"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center text-muted py-4">No hay servicios todavía.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% include "core/pagination.html" %}
+{% endblock %}

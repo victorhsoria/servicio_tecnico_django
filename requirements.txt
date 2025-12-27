@@ -1,0 +1,6 @@
+Django>=6.0,<6.1
+python-dotenv>=1.0
+gunicorn>=22.0
+whitenoise>=6.7
+openpyxl
+reportlab

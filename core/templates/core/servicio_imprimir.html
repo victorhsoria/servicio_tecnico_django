@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Imprimir Servicio #{{ object.id }}{% endblock %}
+{% block content %}
+
+<div class="no-print d-flex justify-content-end mb-3">
+  <button class="btn btn-dark" onclick="window.print()">
+    <i class="bi bi-printer"></i> Imprimir
+  </button>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="print-doc">
+
+      <div class="print-header">
+        <div>
+          <h1 class="print-title">Victor Soria</h1>
+          <div class="print-muted">Servicio técnico</div>
+          <div class="print-muted">9 de julio 1070 · Metán, Salta</div>
+          <div class="print-muted">Cel. 3876505131</div>
+        </div>
+
+        <div class="print-meta">
+          <div><strong>Comprobante:</strong> Servicio #{{ object.id }}</div>
+          <div><strong>Ingreso:</strong> {{ object.fecha_ingreso|date:"d/m/Y H:i" }}</div>
+
+          <div class="d-flex align-items-center justify-content-end gap-2 mt-1">
+            <span class="print-muted">Estado:</span>
+            <span class="badge badge-state" data-state="{{ object.estado_actual }}">
+              {{ object.estado_actual }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="print-grid print-avoid-break">
+        <div class="print-col">
+          <div class="print-label">Cliente</div>
+          <div>{{ object.cliente }}</div>
+          <div class="print-muted">
+            {{ object.cliente.telefono|default:"-" }} · {{ object.cliente.email|default:"-" }}
+          </div>
+        </div>
+
+        <div class="print-col">
+          <div class="print-label">Equipo</div>
+          <div>{{ object.tipo_equipo }}</div>
+          <div class="print-muted">{{ object.marca_modelo|default:"-" }}</div>
+        </div>
+      </div>
+
+      <hr class="print-hr">
+
+      <div class="print-avoid-break">
+        <div class="print-label">Problema reportado</div>
+        <div class="print-muted">{{ object.problema_reportado|linebreaksbr }}</div>
+      </div>
+
+      {% if object.observaciones_tecnicas %}
+      <hr class="print-hr">
+      <div class="print-avoid-break">
+        <div class="print-label">Observaciones técnicas</div>
+        <div class="print-muted">{{ object.observaciones_tecnicas|linebreaksbr }}</div>
+      </div>
+      {% endif %}
+
+      <hr class="print-hr">
+
+      <div class="print-grid print-avoid-break">
+        <div class="print-col">
+          <div class="print-label">Costo</div>
+          <div>${{ object.costo_total|default:"0.00" }}</div>
+        </div>
+        <div class="print-col">
+          <div class="print-label">Entrega</div>
+          <div>{{ object.fecha_entrega|date:"d/m/Y H:i"|default:"-" }}</div>
+        </div>
+      </div>
+
+      <div class="print-signs print-avoid-break">
+        <div class="print-sign">
+          <div class="print-label">Firma cliente</div>
+          <span class="print-line"></span>
+        </div>
+        <div class="print-sign">
+          <div class="print-label">Firma técnico</div>
+          <span class="print-line"></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
