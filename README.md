@@ -1,30 +1,42 @@
 # Servicio Técnico (Django)
 
-Este proyecto es el port a Django de tu app Flask de servicio técnico (clientes, servicios, historial de estados y reportes).
+App web para gestionar un servicio técnico: **clientes, servicios/órdenes, historial de estados, comprobantes imprimibles y reportes con exportación a Excel/PDF**.  
+Hecho con **Django + Bootstrap**, simple, rápido y bien usable.
 
-## Arranque rápido
-```bash
-python -m venv .venv
-# Windows:
-.venv\Scripts\activate
-# Linux/Mac:
-# source .venv/bin/activate
+---
 
-pip install -r requirements.txt
-copy .env.example .env   # en Windows (o cp en Linux)
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
-```
+## ✨ Qué incluye
 
-## Importar datos desde tu SQLite de Flask (opcional)
-1. Copiá `servicio_tecnico.db` (el de Flask) al lado del proyecto o ajustá `FLASK_SQLITE_PATH` en `.env`.
-2. Corré:
-```bash
-python manage.py import_flask_sqlite
-```
+- ✅ CRUD de **Clientes**
+- ✅ CRUD de **Servicios** (órdenes de trabajo)
+- ✅ **Historial de estados** por servicio
+- ✅ Listados con **búsqueda y filtros**
+- ✅ **Comprobante / Orden de trabajo** imprimible (con checkboxes tildables antes de imprimir)
+- ✅ **Reportes** con filtros (fecha + estado)
+- ✅ Exportación desde Reportes:
+  - 📄 PDF
+  - 📊 Excel
 
-## Apps
-- `core`: modelos, CRUD, reportes, templates
+---
 
-> Nota: esto es un starter kit. Lo podés extender con auth, permisos, PDF, etc.
+## 🧱 Tech stack
+
+- Django (v6.x)
+- SQLite (dev)
+- Bootstrap 5 + Bootstrap Icons
+- reportlab (PDF)
+- openpyxl (Excel)
+- python-dotenv (variables de entorno)
+
+---
+
+## 🚀 Instalación (Windows)
+
+Cloná el repo y creá un entorno virtual:
+
+```bat
+git clone https://github.com/victorhsoria/servicio_tecnico_django.git
+cd servicio_tecnico_django
+
+python -m venv env
+env\Scripts\activate
