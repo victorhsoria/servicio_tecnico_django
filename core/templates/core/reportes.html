@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load formatting %}
+
 {% block title %}Reportes · Servicio Técnico{% endblock %}
 
 {% block content %}
@@ -66,7 +68,9 @@
     <div class="card shadow-sm">
       <div class="card-body">
         <div class="text-muted small">Ingresos (filtro)</div>
-        <div class="display-6 fw-semibold">${{ total_ingresos|floatformat:2 }}</div>
+        <div class="display-6 fw-semibold">
+            ${{ total_ingresos|default:0|num:2 }}
+        </div>
       </div>
     </div>
   </div>
@@ -75,7 +79,9 @@
     <div class="card shadow-sm">
       <div class="card-body">
         <div class="text-muted small">Ingresos mes actual</div>
-        <div class="display-6 fw-semibold">${{ ingresos_mes_actual|floatformat:2 }}</div>
+        <div class="display-6 fw-semibold">
+           ${{ ingresos_mes_actual|default:0|num:2 }}
+        </div>
       </div>
     </div>
   </div>
@@ -84,7 +90,9 @@
     <div class="card shadow-sm">
       <div class="card-body">
         <div class="text-muted small">Servicios (filtro)</div>
-        <div class="display-6 fw-semibold">{{ total_servicios_filtrados }}</div>
+        <div class="display-6 fw-semibold">
+           {{ total_servicios_filtrados|default:0|num:0 }}
+        </div>
       </div>
     </div>
   </div>

@@ -670,7 +670,8 @@ def reportes_export_pdf(request):
             cliente,
             equipo,
             r["estado_actual"],
-            f"$ {fmt_ars(r.get("costo_total") or 0)}",
+            f"$ {fmt_ars(r.get('costo_total') or 0)}",
+
         ])
 
     t3 = Table(
