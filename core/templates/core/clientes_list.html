@@ -2,32 +2,35 @@
 {% block title %}Clientes · Servicio Técnico{% endblock %}
 
 {% block content %}
-<div class="d-flex align-items-center justify-content-between mb-3">
+<div class="page-head">
   <div>
-    <h1 class="h3 mb-0">Clientes</h1>
-    <div class="text-muted small">Tu base de contactos, pero con facha.</div>
+    <h1 class="page-title">Clientes</h1>
+    <div class="page-subtitle">Contactos, historial de ingresos y accesos rápidos a sus servicios.</div>
   </div>
   <a class="btn btn-primary" href="{% url 'clientes_nuevo' %}">
-    <i class="bi bi-person-plus"></i> Nuevo
+    <i class="bi bi-person-plus"></i> Nuevo cliente
   </a>
 </div>
 
-<form class="row g-2 mb-3" method="get">
-  <div class="col-12 col-lg-10">
-    <input class="form-control" name="q" value="{{ request.GET.q|default_if_none:'' }}"
-           placeholder="Buscar por nombre, teléfono, email, DNI/CUIT…">
-  </div>
-  <div class="col-12 col-lg-2 d-grid">
-    <button class="btn btn-outline-dark" type="submit">
-      <i class="bi bi-search"></i> Buscar
-    </button>
+<form class="filter-panel" method="get">
+  <div class="row g-2 align-items-center">
+    <div class="col-12 col-lg-10">
+      <div class="input-group">
+        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+        <input class="form-control" name="q" value="{{ request.GET.q|default_if_none:'' }}"
+               placeholder="Buscar por nombre, teléfono, email, DNI/CUIT o dirección">
+      </div>
+    </div>
+    <div class="col-12 col-lg-2 d-grid">
+      <button class="btn btn-outline-dark" type="submit">Buscar</button>
+    </div>
   </div>
 </form>
 
-<div class="card shadow-sm">
+<div class="card">
   <div class="table-responsive">
     <table class="table table-hover mb-0 align-middle table-modern">
-      <thead class="table-light">
+      <thead>
         <tr>
           <th>Cliente</th>
           <th>DNI/CUIT</th>
@@ -47,34 +50,23 @@
               <span class="avatar text-white {% cycle 'bg-primary' 'bg-success' 'bg-danger' 'bg-warning text-dark' 'bg-info text-dark' 'bg-dark' %}">
                 {{ c.nombre|default:"?"|first|upper }}{{ c.apellido|default:""|first|upper }}
               </span>
-
               <div>
                 <div class="client-name">{{ c.apellido }}, {{ c.nombre }}</div>
-                <div class="text-muted small">
-                  ID: {{ c.id }}
-                </div>
+                <div class="text-muted small">ID {{ c.id }}</div>
               </div>
             </div>
           </td>
 
-          <td class="text-muted">
-            {{ c.dni_cuit|default:"-" }}
-          </td>
+          <td class="text-muted">{{ c.dni_cuit|default:"-" }}</td>
 
           <td>
             <div class="d-flex flex-wrap gap-2">
-              <span class="client-chip">
-                <i class="bi bi-telephone"></i> {{ c.telefono|default:"-" }}
-              </span>
-              <span class="client-chip">
-                <i class="bi bi-envelope"></i> {{ c.email|default:"-" }}
-              </span>
+              <span class="client-chip"><i class="bi bi-telephone"></i> {{ c.telefono|default:"-" }}</span>
+              <span class="client-chip"><i class="bi bi-envelope"></i> {{ c.email|default:"-" }}</span>
             </div>
           </td>
 
-          <td class="text-muted">
-            {{ c.direccion|default:"-" }}
-          </td>
+          <td class="text-muted">{{ c.direccion|default:"-" }}</td>
 
           <td class="text-center">
             <a class="badge text-bg-primary text-decoration-none"
@@ -93,7 +85,7 @@
           </td>
 
           <td class="text-end">
-            <div class="btn-group" role="group" aria-label="Acciones">
+            <div class="action-group" aria-label="Acciones">
               <a class="btn btn-sm btn-outline-primary" href="{% url 'clientes_editar' c.pk %}" title="Editar">
                 <i class="bi bi-pencil"></i>
               </a>
@@ -105,8 +97,8 @@
         </tr>
         {% empty %}
         <tr>
-          <td colspan="7" class="text-center text-muted py-4">
-            No hay clientes todavía.
+          <td colspan="7">
+            <div class="empty-state border-0 shadow-none">No hay clientes todavía.</div>
           </td>
         </tr>
         {% endfor %}

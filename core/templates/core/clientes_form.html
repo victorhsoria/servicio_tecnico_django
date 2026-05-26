@@ -1,19 +1,25 @@
 {% extends "base.html" %}
 {% block title %}Cliente · Servicio Técnico{% endblock %}
 {% block content %}
-<div class="card shadow-sm">
-  <div class="card-body">
-    <h1 class="h4 mb-3">{% if object %}Editar cliente{% else %}Nuevo cliente{% endif %}</h1>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">{% if object %}Editar cliente{% else %}Nuevo cliente{% endif %}</h1>
+    <div class="page-subtitle">Datos de contacto para seguimiento y comprobantes.</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-4">
     <form method="post" class="row g-3">{% csrf_token %}
       {% for field in form %}
         <div class="col-12 col-md-6">
-          <label class="form-label">{{ field.label }}</label>
+          <label class="form-label fw-semibold">{{ field.label }}</label>
           {{ field }}
           {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
-          {% for e in field.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          {% for e in field.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
         </div>
       {% endfor %}
-      <div class="col-12 d-flex gap-2">
+      <div class="col-12 d-flex flex-wrap gap-2 pt-2">
         <button class="btn btn-primary" type="submit"><i class="bi bi-save"></i> Guardar</button>
         <a class="btn btn-outline-secondary" href="{% url 'clientes_list' %}">Volver</a>
       </div>

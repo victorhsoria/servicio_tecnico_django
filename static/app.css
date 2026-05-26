@@ -1,77 +1,490 @@
-/* minimal vibes */
-.card-hover { transition: transform .08s ease-in-out; }
-.card-hover:hover { transform: translateY(-2px); }
-.badge-state { font-weight: 600; }
-@media print {
-  nav, .no-print { display: none !important; }
-  body { background: #fff !important; }
-  .container { max-width: 100% !important; }
+:root {
+  --app-bg: #eef2f6;
+  --app-surface: #ffffff;
+  --app-surface-soft: #f7f9fc;
+  --app-ink: #182230;
+  --app-muted: #667085;
+  --app-border: #d9e1ec;
+  --app-brand: #145c72;
+  --app-brand-strong: #0d4050;
+  --app-accent: #d96c2c;
+  --app-success: #157347;
+  --app-shadow: 0 18px 42px rgba(16, 24, 40, .08);
 }
 
-.badge-state { font-weight: 600; }
-
-/* Mapeo por estado */
-.badge-state[data-state="Pendiente"] { background: var(--bs-secondary); }
-.badge-state[data-state="En Diagnóstico"] { background: var(--bs-info); }
-.badge-state[data-state="En Reparación"] { background: var(--bs-primary); }
-.badge-state[data-state="En Espera de Repuestos"] { background: var(--bs-warning); color: #111; }
-.badge-state[data-state="Listo para Retirar"] { background: var(--bs-success); }
-.badge-state[data-state="Entregado"] { background: var(--bs-dark); }
-.badge-state[data-state="Cancelado"] { background: var(--bs-danger); }
-
-@media print {
-  /* Oculta lo que no va en papel */
-  .no-print { display: none !important; }
-
-  /* Asegura contraste y legibilidad en B/N */
-  .badge-state {
-    background: #000 !important;
-    color: #fff !important;
-    border: 1px solid #000 !important;
-  }
-
-  /* Evita sombras y cosas innecesarias en impresión */
-  .card, .shadow-sm { box-shadow: none !important; }
+body {
+  background:
+    linear-gradient(180deg, #f7fafb 0, #edf4f6 330px, var(--app-bg) 640px),
+    var(--app-bg);
+  color: var(--app-ink);
+  font-size: .95rem;
 }
 
-/* ====== PRINT: Comprobante A4 prolijo ====== */
+a { color: var(--app-brand); }
+a:hover { color: var(--app-brand-strong); }
+
+.app-shell {
+  max-width: 1240px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.page-wrap { padding-top: 1.5rem; padding-bottom: 2.5rem; }
+
+.app-navbar {
+  background: rgba(11, 31, 43, .96);
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  box-shadow: 0 10px 28px rgba(16, 24, 40, .14);
+  backdrop-filter: blur(12px);
+}
+
+.navbar-toggler { border-color: rgba(255, 255, 255, .2); }
+.navbar-toggler:focus { box-shadow: 0 0 0 .15rem rgba(255, 255, 255, .25); }
+.navbar-toggler-icon { filter: invert(1) grayscale(1) brightness(2); }
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: .7rem;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.brand-mark:hover { color: #fff; }
+.brand-mark small {
+  display: block;
+  color: rgba(255, 255, 255, .66);
+  font-size: .72rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--app-accent), #f0a43c);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22);
+}
+
+.app-navbar .nav-link {
+  color: rgba(255, 255, 255, .72);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  margin: .15rem;
+  padding: .55rem .8rem;
+  font-weight: 650;
+}
+
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link.active {
+  color: #fff;
+  background: rgba(255, 255, 255, .12);
+}
+
+.nav-time {
+  color: rgba(255, 255, 255, .75);
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .86rem;
+  font-weight: 600;
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.15rem;
+  padding: 1.35rem;
+  border-radius: 8px;
+  color: #fff;
+  background:
+    linear-gradient(120deg, rgba(20, 92, 114, .98), rgba(17, 42, 61, .98) 58%, rgba(217, 108, 44, .95)),
+    #123949;
+  box-shadow: 0 22px 50px rgba(16, 24, 40, .16);
+  overflow: hidden;
+  position: relative;
+}
+
+.page-head::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 5px;
+  background: linear-gradient(90deg, #30c7b5, #f0a43c, #e44d61, #3b82f6);
+}
+
+.page-title {
+  margin: 0;
+  font-size: clamp(1.45rem, 2vw, 2rem);
+  font-weight: 800;
+}
+
+.page-subtitle {
+  color: rgba(255, 255, 255, .78);
+  margin-top: .25rem;
+}
+
+.page-head .btn-outline-dark,
+.page-head .btn-outline-secondary,
+.page-head .btn-outline-success,
+.page-head .btn-outline-danger {
+  color: #fff;
+  border-color: rgba(255, 255, 255, .42);
+  background: rgba(255, 255, 255, .08);
+}
+
+.page-head .btn-outline-dark:hover,
+.page-head .btn-outline-secondary:hover,
+.page-head .btn-outline-success:hover,
+.page-head .btn-outline-danger:hover {
+  color: #14212b;
+  background: #fff;
+  border-color: #fff;
+}
+
+.page-head .btn-primary {
+  --bs-btn-bg: #f0a43c;
+  --bs-btn-border-color: #f0a43c;
+  --bs-btn-color: #16222c;
+  --bs-btn-hover-bg: #ffbd59;
+  --bs-btn-hover-border-color: #ffbd59;
+  --bs-btn-hover-color: #16222c;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.card,
+.filter-panel,
+.empty-state {
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow);
+}
+
+.card { overflow: hidden; }
+.card-header {
+  background: var(--app-surface);
+  border-color: var(--app-border);
+  font-weight: 800;
+}
+
+.filter-panel {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 5px solid var(--app-accent);
+}
+
+.metric-card {
+  min-height: 128px;
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+  position: relative;
+}
+
+.metric-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--app-brand), #30c7b5);
+}
+
+.row > [class*="col-"]:nth-child(2n) .metric-card::before {
+  background: linear-gradient(90deg, #0aa2c0, #3b82f6);
+}
+
+.row > [class*="col-"]:nth-child(3n) .metric-card::before {
+  background: linear-gradient(90deg, #d96c2c, #f0a43c);
+}
+
+.row > [class*="col-"]:nth-child(4n) .metric-card::before {
+  background: linear-gradient(90deg, #bb2d3b, #e44d61);
+}
+
+.row > [class*="col-"]:nth-child(5n) .metric-card::before {
+  background: linear-gradient(90deg, #157347, #30c7b5);
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(20, 92, 114, .35);
+  box-shadow: 0 22px 48px rgba(16, 24, 40, .12);
+}
+
+.metric-label {
+  color: var(--app-muted);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.metric-value {
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 850;
+}
+
+.metric-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ffffff, #edf6f8);
+  border: 1px solid var(--app-border);
+  font-size: 1.35rem;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .8);
+}
+
+.quick-filter {
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.table-modern {
+  --bs-table-hover-bg: rgba(20, 92, 114, .055);
+}
+
+.table-modern thead th {
+  background: linear-gradient(180deg, #f8fbfd, #eef4f7);
+  color: #475467;
+  border-bottom: 1px solid var(--app-border);
+  font-size: .76rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.table-modern tbody td { border-color: #edf1f6; }
+
+.action-group {
+  display: inline-flex;
+  gap: .35rem;
+  white-space: nowrap;
+}
+
+.btn {
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--app-brand);
+  --bs-btn-border-color: var(--app-brand);
+  --bs-btn-hover-bg: var(--app-brand-strong);
+  --bs-btn-hover-border-color: var(--app-brand-strong);
+  --bs-btn-active-bg: var(--app-brand-strong);
+  --bs-btn-active-border-color: var(--app-brand-strong);
+}
+
+.btn-outline-dark {
+  --bs-btn-color: #344054;
+  --bs-btn-border-color: #b8c2cf;
+  --bs-btn-hover-bg: #1f2937;
+  --bs-btn-hover-border-color: #1f2937;
+}
+
+.form-control,
+.form-select {
+  border-color: #cfd8e5;
+  border-radius: 8px;
+  min-height: 42px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: rgba(20, 92, 114, .55);
+  box-shadow: 0 0 0 .2rem rgba(20, 92, 114, .12);
+}
+
+textarea.form-control { min-height: 96px; }
+
+.badge-state {
+  border-radius: 999px;
+  font-weight: 800;
+  padding: .42rem .65rem;
+}
+
+.badge-state[data-state="Pendiente"] { background: #667085; color: #fff; }
+.badge-state[data-state="En Diagnóstico"] { background: #0aa2c0; color: #073642; }
+.badge-state[data-state="En Reparación"] { background: var(--app-brand); color: #fff; }
+.badge-state[data-state="En Espera de Repuestos"] { background: #f0ad4e; color: #271700; }
+.badge-state[data-state="Listo para Retirar"] { background: var(--app-success); color: #fff; }
+.badge-state[data-state="Entregado"] { background: #263238; color: #fff; }
+.badge-state[data-state="Cancelado"] { background: #bb2d3b; color: #fff; }
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 850;
+  flex: 0 0 40px;
+  box-shadow: inset 0 -10px 18px rgba(0, 0, 0, .08);
+}
+
+.client-name { font-weight: 800; }
+.client-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .24rem .55rem;
+  border-radius: 999px;
+  background: #eef6f8;
+  border: 1px solid #d6e8ee;
+  color: #315462;
+  font-size: .82rem;
+  font-weight: 650;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+}
+
+.detail-item {
+  background: linear-gradient(180deg, #ffffff, var(--app-surface-soft));
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+  padding: .75rem;
+  border-top: 3px solid rgba(20, 92, 114, .45);
+}
+
+.detail-label {
+  color: var(--app-muted);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.timeline {
+  position: relative;
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: 1.5rem;
+  padding-bottom: 1rem;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: .32rem;
+  top: .4rem;
+  width: .65rem;
+  height: .65rem;
+  border-radius: 50%;
+  background: var(--app-brand);
+  box-shadow: 0 0 0 4px rgba(20, 92, 114, .12);
+}
+
+.timeline-item::after {
+  content: "";
+  position: absolute;
+  left: .62rem;
+  top: 1.1rem;
+  bottom: 0;
+  width: 1px;
+  background: var(--app-border);
+}
+
+.timeline-item:last-child { padding-bottom: 0; }
+.timeline-item:last-child::after { display: none; }
+
+.empty-state {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: var(--app-muted);
+}
+
+.message-stack { margin-bottom: 1rem; }
+
+.st-check {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  user-select: none;
+}
+
+.st-check input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+}
+
+.print-box { display: none; }
+
+@media (max-width: 991.98px) {
+  .page-head { align-items: flex-start; flex-direction: column; }
+  .page-actions { width: 100%; display: grid !important; grid-template-columns: 1fr; }
+  .nav-time { margin-top: .75rem; }
+}
+
+@media (max-width: 767.98px) {
+  .app-shell { padding-left: .85rem; padding-right: .85rem; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .table-responsive { border-radius: 8px; }
+}
+
 @page {
   size: A4;
   margin: 12mm;
 }
 
 @media print {
-  /* Limpieza general */
+  nav,
+  header,
+  footer,
+  .no-print { display: none !important; }
+
   body {
+    background: #fff !important;
     font-size: 11.5pt;
     line-height: 1.25;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
-  /* Ocultar UI */
-  .no-print,
-  nav,
-  header,
-  footer {
-    display: none !important;
-  }
+  .container,
+  .container-fluid,
+  .app-shell { max-width: 100% !important; padding: 0 !important; }
 
-  /* Tarjetas sin “look web” */
-  .card, .shadow-sm {
+  .card,
+  .filter-panel,
+  .shadow-sm {
     box-shadow: none !important;
-    border: 0 !important;
-  }
-  .card-body {
-    padding: 0 !important;
+    border-color: #000 !important;
   }
 
-  /* Contenedor documento */
-  .print-doc {
-    width: 100%;
+  .badge-state {
+    background: #000 !important;
+    color: #fff !important;
+    border: 1px solid #000 !important;
   }
 
-  /* Encabezado */
+  .print-doc { width: 100%; }
+
   .print-header {
     display: flex;
     justify-content: space-between;
@@ -94,49 +507,25 @@
     color: #000 !important;
   }
 
-  /* Bloques */
   .print-grid {
     display: flex;
     gap: 18px;
     margin: 10px 0 6px;
   }
-  .print-col {
-    flex: 1;
-  }
 
-  .print-label {
-    font-weight: 700;
-    margin-bottom: 2px;
-  }
-  .print-muted {
-    color: #000 !important;
-    font-size: 10pt;
-  }
+  .print-col { flex: 1; }
+  .print-label { font-weight: 700; margin-bottom: 2px; }
+  .print-muted { color: #000 !important; font-size: 10pt; }
+  .print-hr { border: 0; border-top: 1px solid #000; margin: 10px 0; }
 
-  /* Separadores */
-  .print-hr {
-    border: 0;
-    border-top: 1px solid #000;
-    margin: 10px 0;
-  }
-
-  /* Badge estado en B/N (lo que ya querías) */
-  .badge-state {
-    background: #000 !important;
-    color: #fff !important;
-    border: 1px solid #000 !important;
-  }
-
-  /* Firmas */
   .print-signs {
     margin-top: 16px;
     font-size: 10.5pt;
     display: flex;
     gap: 18px;
   }
-  .print-sign {
-    flex: 1;
-  }
+
+  .print-sign { flex: 1; }
   .print-line {
     display: block;
     border-bottom: 1px solid #000;
@@ -144,110 +533,20 @@
     margin-top: 10px;
   }
 
-  /* Evitar cortes feos */
   .print-avoid-break {
     break-inside: avoid;
     page-break-inside: avoid;
   }
-}
 
-/* ===== Clientes: look & feel ===== */
-.avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  letter-spacing: .5px;
-  flex: 0 0 38px;
-}
-
-.client-name { font-weight: 700; }
-.client-sub { font-size: .875rem; }
-
-.client-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-  padding: .18rem .55rem;
-  border-radius: 999px;
-  background: rgba(0,0,0,.06);
-  font-size: .825rem;
-}
-
-.table-modern thead th { font-size: .85rem; }
-.table-modern tbody tr:hover { background: rgba(13,110,253,.06); } /* azul suave */
-
-/* ===== Clientes: look & feel ===== */
-.table-modern thead th { font-size: .85rem; }
-.table-modern tbody tr:hover { background: rgba(13,110,253,.06); }
-
-.avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  letter-spacing: .5px;
-  flex: 0 0 38px;
-}
-
-.client-name { font-weight: 700; }
-.client-sub { font-size: .875rem; }
-
-.client-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-  padding: .18rem .55rem;
-  border-radius: 999px;
-  background: rgba(0,0,0,.06);
-  font-size: .825rem;
-}
-
-/* Un poquito más de “card vibe” */
-.card.shadow-sm { border: 1px solid rgba(0,0,0,.06); }
-
-.client-chip {
-  background: rgba(13,110,253,.10);
-  border: 1px solid rgba(13,110,253,.15);
-}
-
-/* Checkboxes “tildables” en pantalla, y que impriman bien */
-.st-check{
-  display: inline-flex;
-  align-items: center;
-  gap: .4rem;
-  user-select: none;
-}
-
-.st-check input[type="checkbox"]{
-  width: 1.1rem;
-  height: 1.1rem;
-  margin: 0;
-}
-
-.print-box{
-  display: none; /* en pantalla se ve el checkbox real */
-}
-
-/* En impresión: ocultamos el checkbox real y dibujamos uno “de papel” */
-@media print{
-  .st-check input[type="checkbox"]{
-    display: none;
-  }
-  .print-box{
+  .st-check input[type="checkbox"] { display: none; }
+  .print-box {
     display: inline-block;
     width: 12pt;
     height: 12pt;
     border: 1pt solid #000;
     position: relative;
   }
-  .st-check input[type="checkbox"]:checked + .print-box::after{
+  .st-check input[type="checkbox"]:checked + .print-box::after {
     content: "✓";
     position: absolute;
     left: 2pt;
