@@ -39,9 +39,23 @@ class ServicioForm(forms.ModelForm):
             "fecha_entrega",
             "estado_actual",
         ]
+        labels = {
+            "fecha_ingreso": "Fecha de ingreso",
+            "fecha_entrega": "Fecha de entrega (opcional)",
+        }
+        help_texts = {
+            "fecha_ingreso": "Se registra aunque el servicio todavía no esté entregado.",
+            "fecha_entrega": "Puede dejarse vacía hasta que el equipo sea entregado.",
+        }
         widgets = {
-            "fecha_ingreso": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-            "fecha_entrega": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "fecha_ingreso": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={"type": "datetime-local", "step": "60"},
+            ),
+            "fecha_entrega": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={"type": "datetime-local", "step": "60"},
+            ),
             "problema_reportado": forms.Textarea(attrs={"rows": 3}),
             "observaciones_tecnicas": forms.Textarea(attrs={"rows": 3}),
             "solucion_implementada": forms.Textarea(attrs={"rows": 3}),
@@ -49,6 +63,15 @@ class ServicioForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["fecha_ingreso"].input_formats = ["%Y-%m-%dT%H:%M"]
+        self.fields["fecha_entrega"].input_formats = ["%Y-%m-%dT%H:%M"]
+
+        if not self.is_bound and not self.instance.pk:
+            self.initial["fecha_ingreso"] = timezone.localtime().replace(
+                second=0,
+                microsecond=0,
+            )
+
         add_bootstrap(self)
 
     def clean(self):
