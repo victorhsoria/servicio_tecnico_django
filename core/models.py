@@ -62,6 +62,21 @@ class Servicio(models.Model):
     def __str__(self):
         return f"Servicio #{self.pk} - {self.cliente} - {self.tipo_equipo}"
 
+class ServicioImagen(models.Model):
+    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, related_name="imagenes")
+    imagen = models.ImageField(upload_to="servicios/%Y/%m/")
+    descripcion = models.CharField(max_length=160, null=True, blank=True)
+    fecha_subida = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ["-fecha_subida"]
+        indexes = [
+            models.Index(fields=["fecha_subida"]),
+        ]
+
+    def __str__(self):
+        return f"Imagen servicio #{self.servicio_id}"
+
 class HistorialEstado(models.Model):
     servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, related_name="historial_estados")
     estado = models.CharField(max_length=50, choices=EstadoServicio.choices)

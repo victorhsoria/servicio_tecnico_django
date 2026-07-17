@@ -92,3 +92,33 @@ class HistorialEstadoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         add_bootstrap(self)
+
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleImageField(forms.ImageField):
+    widget = MultipleFileInput
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            return [single_file_clean(d, initial) for d in data]
+        return [single_file_clean(data, initial)]
+
+
+class ServicioImagenForm(forms.Form):
+    imagenes = MultipleImageField(
+        label="Imagenes del servicio",
+        widget=MultipleFileInput(attrs={"accept": "image/*", "multiple": True}),
+    )
+    descripcion = forms.CharField(
+        label="Descripcion",
+        required=False,
+        max_length=160,
+        widget=forms.TextInput(attrs={"placeholder": "Ej: placa reparada, equipo terminado"}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        add_bootstrap(self)

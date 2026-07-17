@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta
 from django.db.models import Count, Sum, Q
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import (
     TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
 )
-from .models import Cliente, Servicio, HistorialEstado, EstadoServicio
-from .forms import ClienteForm, ServicioForm, HistorialEstadoForm
+from .models import Cliente, Servicio, HistorialEstado, EstadoServicio, ServicioImagen
+from .forms import ClienteForm, ServicioForm, HistorialEstadoForm, ServicioImagenForm
 from .models import Servicio
 from .models import Cliente
 from io import BytesIO
@@ -233,6 +233,43 @@ class ServicioUpdateView(UpdateView):
 class ServicioDetailView(DetailView):
     model = Servicio
     template_name = "core/servicio_detalle.html"
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("cliente")
+            .prefetch_related("imagenes", "historial_estados")
+        )
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["imagen_form"] = ServicioImagenForm()
+        return ctx
+
+
+def servicio_imagen_subir(request, pk):
+    servicio = get_object_or_404(Servicio, pk=pk)
+    if request.method == "POST":
+        form = ServicioImagenForm(request.POST, request.FILES)
+        if form.is_valid():
+            descripcion = form.cleaned_data.get("descripcion", "")
+            for archivo in form.cleaned_data["imagenes"]:
+                ServicioImagen.objects.create(
+                    servicio=servicio,
+                    imagen=archivo,
+                    descripcion=descripcion,
+                )
+    return redirect("servicio_detalle", pk=servicio.pk)
+
+
+def servicio_imagen_eliminar(request, pk, imagen_pk):
+    servicio = get_object_or_404(Servicio, pk=pk)
+    if request.method == "POST":
+        imagen = get_object_or_404(ServicioImagen, pk=imagen_pk, servicio=servicio)
+        imagen.imagen.delete(save=False)
+        imagen.delete()
+    return redirect("servicio_detalle", pk=servicio.pk)
 
 class ServicioDeleteView(DeleteView):
     model = Servicio
