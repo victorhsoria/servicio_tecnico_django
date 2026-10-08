@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Servicio #{{ object.id }} · Servicio Técnico{% endblock %}
 {% block content %}
-<div class="page-head">
+<div class="page-head workspace-head">
   <div>
     <h1 class="page-title">Servicio #{{ object.id }}</h1>
     <div class="page-subtitle">{{ object.cliente }} · {{ object.tipo_equipo }}</div>
@@ -20,13 +20,24 @@
   </div>
 </div>
 
-<div class="row g-3">
-  <div class="col-12 col-lg-7">
-    <div class="card h-100">
-      <div class="card-body p-4">
+<div class="service-summary">
+  <span class="badge badge-state" data-state="{{ object.estado_actual }}">{{ object.estado_actual }}</span>
+  <span><i class="bi bi-calendar-event"></i> Ingreso: {{ object.fecha_ingreso|date:"d/m/Y H:i" }}</span>
+  {% if object.cliente.telefono %}<span><i class="bi bi-telephone"></i> {{ object.cliente.telefono }}</span>{% endif %}
+  <a href="{% url 'servicios_list' %}?cliente={{ object.cliente_id }}">Servicios del cliente <i class="bi bi-arrow-right"></i></a>
+</div>
+<ul class="nav nav-tabs service-tabs no-print" role="tablist">
+  <li class="nav-item" role="presentation"><button class="nav-link {% if not mostrar_fotos %}active{% endif %}" id="equipo-tab" data-bs-toggle="tab" data-bs-target="#equipo" type="button" role="tab" aria-controls="equipo" aria-selected="{% if mostrar_fotos %}false{% else %}true{% endif %}"><i class="bi bi-pc-display"></i> Equipo y diagnóstico</button></li>
+  <li class="nav-item" role="presentation"><button class="nav-link" id="historial-tab" data-bs-toggle="tab" data-bs-target="#historial" type="button" role="tab" aria-controls="historial" aria-selected="false"><i class="bi bi-clock-history"></i> Historial</button></li>
+  <li class="nav-item" role="presentation"><button class="nav-link {% if mostrar_fotos %}active{% endif %}" id="fotos-tab" data-bs-toggle="tab" data-bs-target="#fotos" type="button" role="tab" aria-controls="fotos" aria-selected="{% if mostrar_fotos %}true{% else %}false{% endif %}"><i class="bi bi-images"></i> Fotografías <span class="badge text-bg-light">{{ object.imagenes.count }}</span></button></li>
+  <li class="nav-item" role="presentation"><button class="nav-link" id="costos-tab" data-bs-toggle="tab" data-bs-target="#costos" type="button" role="tab" aria-controls="costos" aria-selected="false"><i class="bi bi-receipt"></i> Costos y entrega</button></li>
+</ul>
+<div class="tab-content service-content">
+  <div class="tab-pane {% if not mostrar_fotos %}show active{% endif %}" id="equipo" role="tabpanel" aria-labelledby="equipo-tab" tabindex="0">
+    <div class="service-panel">
+      <div>
         <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
-          <span class="badge badge-state" data-state="{{ object.estado_actual }}">{{ object.estado_actual }}</span>
-          <div class="text-muted small"><i class="bi bi-calendar-event"></i> Ingreso: {{ object.fecha_ingreso|date:"d/m/Y H:i" }}</div>
+          <h2 class="section-title">{{ object.tipo_equipo }} · {{ object.marca_modelo|default:"Sin marca/modelo" }}</h2>
         </div>
 
         <div class="mb-4">
@@ -48,6 +59,13 @@
         </div>
         {% endif %}
 
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane" id="costos" role="tabpanel" aria-labelledby="costos-tab" tabindex="0">
+    <div class="service-panel">
+      <div>
+        <h2 class="section-title">Costos y entrega</h2>
         <div class="detail-grid mt-4">
           <div class="detail-item">
             <div class="detail-label">Marca/Modelo</div>
@@ -66,9 +84,9 @@
     </div>
   </div>
 
-  <div class="col-12 col-lg-5">
-    <div class="card h-100">
-      <div class="card-body p-4">
+  <div class="tab-pane" id="historial" role="tabpanel" aria-labelledby="historial-tab" tabindex="0">
+    <div class="service-panel">
+      <div>
         <h2 class="section-title mb-3">Historial de estados</h2>
         <div class="timeline">
           {% for h in object.historial_estados.all %}
@@ -89,19 +107,23 @@
     </div>
   </div>
 
-  <div class="col-12">
-    <div class="card">
-      <div class="card-body p-4">
+  <div class="tab-pane {% if mostrar_fotos %}show active{% endif %}" id="fotos" role="tabpanel" aria-labelledby="fotos-tab" tabindex="0">
+    <div class="service-panel">
+      <div>
         <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
           <div>
-            <h2 class="section-title mb-1">Imagenes del servicio</h2>
-            <div class="text-muted small">Fotos del equipo, repuestos, reparacion o trabajo terminado.</div>
+            <h2 class="section-title mb-1">Fotografías del servicio</h2>
           </div>
           <form class="service-image-form no-print" method="post" enctype="multipart/form-data" action="{% url 'servicio_imagen_subir' object.pk %}">
             {% csrf_token %}
+            {% for error in imagen_form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endfor %}
             <div class="service-image-inputs">
+              <div><label class="form-label small" for="{{ imagen_form.imagenes.id_for_label }}">Archivos</label>
               {{ imagen_form.imagenes }}
+              {% for error in imagen_form.imagenes.errors %}<div class="text-danger small" role="alert">{{ error }}</div>{% endfor %}</div>
+              <div><label class="form-label small" for="{{ imagen_form.descripcion.id_for_label }}">Descripción</label>
               {{ imagen_form.descripcion }}
+              {% for error in imagen_form.descripcion.errors %}<div class="text-danger small" role="alert">{{ error }}</div>{% endfor %}</div>
               <button class="btn btn-primary" type="submit">
                 <i class="bi bi-cloud-arrow-up"></i> Subir
               </button>
@@ -113,8 +135,9 @@
           <div class="service-gallery">
             {% for imagen in object.imagenes.all %}
               <div class="service-photo">
-                <a href="{{ imagen.imagen.url }}" target="_blank" rel="noopener">
-                  <img src="{{ imagen.imagen.url }}" alt="{{ imagen.descripcion|default:'Imagen del servicio' }}">
+                <a href="{% url 'servicio_imagen_ver' object.pk imagen.pk %}" target="_blank" rel="noopener" class="service-photo-link">
+                  <img src="{% url 'servicio_imagen_ver' object.pk imagen.pk %}" alt="{{ imagen.descripcion|default:'Imagen del servicio' }}" loading="lazy">
+                  <span class="photo-unavailable" hidden><i class="bi bi-image"></i> Archivo no disponible</span>
                 </a>
                 <div class="service-photo-meta">
                   <div>
@@ -123,7 +146,7 @@
                   </div>
                   <form method="post" action="{% url 'servicio_imagen_eliminar' object.pk imagen.pk %}" class="no-print">
                     {% csrf_token %}
-                    <button class="btn btn-sm btn-outline-danger" type="submit" title="Eliminar imagen">
+                    <button class="btn btn-sm btn-outline-danger" type="submit" title="Eliminar imagen" aria-label="Eliminar imagen">
                       <i class="bi bi-trash"></i>
                     </button>
                   </form>
@@ -138,4 +161,16 @@
     </div>
   </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.querySelectorAll('.service-photo img').forEach(function (img) {
+  function unavailable() {
+    img.hidden = true;
+    img.nextElementSibling.hidden = false;
+  }
+  img.addEventListener('error', unavailable);
+  if (img.complete && img.naturalWidth === 0) unavailable();
+});
+</script>
 {% endblock %}

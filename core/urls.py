@@ -15,6 +15,7 @@ urlpatterns = [
     path("servicios/<int:pk>/editar/", views.ServicioUpdateView.as_view(), name="servicios_editar"),
     path("servicios/<int:pk>/eliminar/", views.ServicioDeleteView.as_view(), name="servicios_eliminar"),
     path("servicios/<int:pk>/imagenes/subir/", views.servicio_imagen_subir, name="servicio_imagen_subir"),
+    path("servicios/<int:pk>/imagenes/<int:imagen_pk>/ver/", views.servicio_imagen_ver, name="servicio_imagen_ver"),
     path("servicios/<int:pk>/imagenes/<int:imagen_pk>/eliminar/", views.servicio_imagen_eliminar, name="servicio_imagen_eliminar"),
     path("servicios/<int:pk>/imprimir/", views.ServicioPrintView.as_view(), name="servicio_imprimir"),
 

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Panel · Servicio Técnico{% endblock %}
 {% block content %}
-<div class="page-head">
+<div class="page-head workspace-head">
   <div>
     <h1 class="page-title">Panel de trabajo</h1>
-    <div class="page-subtitle">Estado operativo de los servicios activos del taller.</div>
+    <div class="page-subtitle">{{ total_activos }} equipos en el taller · {{ ingresos_hoy }} ingresos hoy</div>
   </div>
   <div class="d-flex gap-2 page-actions">
     <a class="btn btn-outline-dark" href="{% url 'clientes_nuevo' %}">
@@ -16,16 +16,15 @@
   </div>
 </div>
 
-<div class="row g-3">
+<div class="dashboard-metrics">
   {% for s in servicios_resumen %}
-  <div class="col-12 col-md-6 col-xl-4">
+  <div>
     <a class="text-decoration-none" href="{% url 'servicios_list' %}?estado={{ s.estado|urlencode }}">
-      <div class="card metric-card h-100">
+      <div class="card metric-card h-100" data-state="{{ s.estado }}">
         <div class="card-body d-flex align-items-start justify-content-between gap-3">
           <div>
             <div class="metric-label">{{ s.estado }}</div>
             <div class="metric-value mt-2">{{ s.count }}</div>
-            <div class="text-muted small mt-2">Servicios en esta etapa</div>
           </div>
           <div class="metric-icon text-{{ s.clase }}">
             <i class="bi {{ s.icono }}"></i>
@@ -40,4 +39,27 @@
   </div>
   {% endfor %}
 </div>
+<section class="work-section mt-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <h2 class="section-title">Órdenes abiertas · primero las más antiguas</h2>
+    <a href="{% url 'servicios_list' %}">Ver todos los servicios <i class="bi bi-arrow-right"></i></a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle table-modern mb-0">
+      <thead><tr><th>Orden / equipo</th><th>Cliente</th><th>Estado</th><th>Ingreso</th><th>Antigüedad</th><th></th></tr></thead>
+      <tbody>
+        {% for s in servicios_antiguos %}
+        <tr>
+          <td><a class="fw-bold" href="{% url 'servicio_detalle' s.pk %}">#{{ s.pk }} · {{ s.tipo_equipo }}</a><div class="small text-muted">{{ s.marca_modelo|default:"Sin marca/modelo" }}</div></td>
+          <td>{{ s.cliente }}</td>
+          <td><span class="badge badge-state" data-state="{{ s.estado_actual }}">{{ s.estado_actual }}</span></td>
+          <td class="text-nowrap">{{ s.fecha_ingreso|date:"d/m/Y" }}</td>
+          <td>{{ s.fecha_ingreso|timesince }}</td>
+          <td><a class="btn btn-sm btn-outline-dark" href="{% url 'servicio_detalle' s.pk %}" title="Abrir servicio" aria-label="Abrir servicio #{{ s.pk }}"><i class="bi bi-arrow-right"></i></a></td>
+        </tr>
+        {% empty %}<tr><td colspan="6" class="text-center py-5 text-muted">No hay órdenes abiertas.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 {% endblock %}

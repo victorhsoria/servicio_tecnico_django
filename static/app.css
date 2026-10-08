@@ -125,7 +125,7 @@ a:hover { color: var(--app-brand-strong); }
 
 .page-title {
   margin: 0;
-  font-size: clamp(1.45rem, 2vw, 2rem);
+  font-size: 1.75rem;
   font-weight: 800;
 }
 
@@ -475,6 +475,49 @@ textarea.form-control { min-height: 96px; }
 }
 
 .print-box { display: none; }
+
+.workspace-head { background: transparent; color: var(--app-ink); padding: .25rem 0 1rem; border-radius: 0; box-shadow: none; overflow: visible; }
+.workspace-head::after { display: none; }
+.workspace-head .page-subtitle { color: var(--app-muted); }
+.workspace-head .btn-outline-dark, .workspace-head .btn-outline-secondary { color: #344054; border-color: #b8c2cf; background: white; }
+.workspace-head .btn-primary { --bs-btn-bg: #145c72; --bs-btn-border-color: #145c72; --bs-btn-color: white; --bs-btn-hover-bg: #0d4050; --bs-btn-hover-border-color: #0d4050; --bs-btn-hover-color: white; }
+.dashboard-metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .75rem; }
+.dashboard-metrics .metric-card { box-shadow: none; min-height: 112px; }
+.dashboard-metrics .metric-card::before { background: #667085; }
+.dashboard-metrics .metric-card[data-state="En Diagnóstico"]::before { background: #0aa2c0; }
+.dashboard-metrics .metric-card[data-state="En Reparación"]::before { background: #145c72; }
+.dashboard-metrics .metric-card[data-state="En Espera de Repuestos"]::before { background: #f0ad4e; }
+.dashboard-metrics .metric-card[data-state="Listo para Retirar"]::before { background: #157347; }
+.metric-label, .detail-label, .table-modern thead th { letter-spacing: 0; }
+.dashboard-metrics .metric-icon { width: 32px; height: 32px; flex: 0 0 32px; font-size: 1rem; }
+.work-section { border-top: 1px solid var(--app-border); padding-top: 1.25rem; }
+.work-section table { background: white; }
+.service-summary { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; padding: .75rem 0 1.25rem; font-size: .86rem; }
+.service-summary a { margin-left: auto; }
+.service-tabs { gap: .25rem; }
+.service-tabs .nav-link { color: #475467; min-height: 46px; font-weight: 600; border-radius: 4px 4px 0 0; }
+.service-tabs .nav-link.active { color: #145c72; border-bottom-color: white; }
+.service-content { background: white; border-bottom: 1px solid var(--app-border); }
+.service-panel { padding: 1.5rem; min-height: 280px; overflow-wrap: anywhere; }
+.service-image-inputs { align-items: end; }
+.service-image-inputs > div { min-width: 0; }
+.service-image-inputs input { width: 100%; }
+.service-photo-link { display: block; }
+.service-photo img[hidden], .photo-unavailable[hidden] { display: none; }
+.photo-unavailable { aspect-ratio: 4 / 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; background: #f1f3f5; color: #667085; }
+.photo-unavailable i { font-size: 2rem; }
+.service-photo-meta > div { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 1100px) { .dashboard-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 575.98px) {
+  .dashboard-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard-metrics .card-body { padding: .85rem; }
+  .dashboard-metrics .metric-icon { display: none; }
+  .service-summary a { margin-left: 0; }
+  .service-tabs .nav-link { padding: .6rem; font-size: .82rem; }
+  .service-panel { padding: 1rem; }
+  .service-gallery { grid-template-columns: minmax(0, 1fr); }
+}
+@media print { .service-content .tab-pane { display: block !important; } }
 
 @media (max-width: 991.98px) {
   .page-head { align-items: flex-start; flex-direction: column; }

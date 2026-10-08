@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from django.db.models import Count, Sum, Q
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
+from django.http import FileResponse, Http404
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import (
@@ -62,6 +64,12 @@ class HomeView(TemplateView):
             {"estado": EstadoServicio.LISTO_RETIRO, "count": counts.get(EstadoServicio.LISTO_RETIRO, 0), "clase": "success", "icono": "bi-check-circle"},
         ]
         ctx["servicios_resumen"] = resumen
+        activos = Servicio.objects.exclude(
+            estado_actual__in=[EstadoServicio.ENTREGADO, EstadoServicio.CANCELADO]
+        )
+        ctx["total_activos"] = sum(item["count"] for item in resumen)
+        ctx["servicios_antiguos"] = activos.select_related("cliente").order_by("fecha_ingreso", "pk")[:8]
+        ctx["ingresos_hoy"] = Servicio.objects.filter(fecha_ingreso__date=timezone.localdate()).count()
         return ctx
 
 # ---- Clientes ----
@@ -260,7 +268,21 @@ def servicio_imagen_subir(request, pk):
                     imagen=archivo,
                     descripcion=descripcion,
                 )
+            messages.success(request, "Fotografias guardadas correctamente.")
+        else:
+            return render(request, "core/servicio_detalle.html", {
+                "object": servicio, "imagen_form": form, "mostrar_fotos": True,
+            }, status=400)
     return redirect("servicio_detalle", pk=servicio.pk)
+
+
+def servicio_imagen_ver(request, pk, imagen_pk):
+    imagen = get_object_or_404(ServicioImagen, pk=imagen_pk, servicio_id=pk)
+    try:
+        archivo = imagen.imagen.open("rb")
+    except (FileNotFoundError, OSError, ValueError):
+        raise Http404("El archivo de esta fotografia no esta disponible.")
+    return FileResponse(archivo)
 
 
 def servicio_imagen_eliminar(request, pk, imagen_pk):
